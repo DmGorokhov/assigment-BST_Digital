@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import RobotStubView
+from .views import get_week_report
+
+app_name = 'robots'
 
 urlpatterns = [
-    path('', RobotStubView.as_view()),
+    path('week_report/', get_week_report, name='week_report'),
 ]
