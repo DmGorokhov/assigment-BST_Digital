@@ -11,6 +11,9 @@ migrate: make-migration
 
 build: install migrate
 
+run-celery:
+	 celery -A R4C worker --loglevel=info & celery -A R4C flower
+
 start-dev:
 		@$(MANAGE) runserver
 
