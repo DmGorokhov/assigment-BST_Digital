@@ -11,6 +11,9 @@ migrate: make-migration
 
 build: install migrate
 
+run-celery:
+	 celery -A R4C worker --loglevel=info & celery -A R4C flower
+
 start-dev:
 		@$(MANAGE) runserver
 
@@ -19,6 +22,10 @@ lint:
 
 test:
 		poetry run ./manage.py test
+
+test-coverage:
+		poetry run coverage run  manage.py test .
+		poetry run coverage html
 
 .PHONY: shell
 shell:

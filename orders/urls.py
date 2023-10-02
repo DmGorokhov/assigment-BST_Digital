@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import OrderStubView
+from .views import add_new_order
+
+app_name = 'orders'
 
 urlpatterns = [
-    path('', OrderStubView.as_view()),
+    path('new/', add_new_order, name='new_order'),
 ]
