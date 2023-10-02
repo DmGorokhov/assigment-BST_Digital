@@ -2,12 +2,12 @@ import json
 from pydantic import BaseModel, constr, ValidationError
 from datetime import datetime
 from .models import Robot
-from django.http import HttpResponseServerError
 from django.db import DatabaseError
+from typing import Literal
 
 
 class BaseRobotData(BaseModel):
-    model: constr(max_length=2)
+    model: Literal['R1', 'R2', 'X5', '13', 'DD', 'S', '07']
     version: constr(max_length=2)
     created: datetime
 
@@ -16,27 +16,32 @@ class NewRobot(BaseRobotData):
     serial: constr(max_length=5)
 
 
-class NewRobotResponse(BaseModel):
-    data: dict = None
+class ParsedRobot(BaseModel):
+    clean_data: dict = None
     error: list = None
 
 
-def create_new_robot(request_data: json) -> NewRobotResponse:
+class NewRobotResponse(BaseModel):
+    response_message: dict
+    response_status: int
+
+
+def get_parsed_and_validate_robot(new_robot_data: json) -> ParsedRobot:
     try:
-        parsed_data = BaseRobotData.model_validate_json(request_data)
-        new_robot_serial = f'{parsed_data.model}-{parsed_data.version}'
-        new_robot = NewRobot(**parsed_data.model_dump(),
-                             serial=new_robot_serial)
-        return NewRobotResponse(data=new_robot.model_dump())
+        robot_request = BaseRobotData.model_validate_json(new_robot_data)
+        return ParsedRobot(clean_data=robot_request.model_dump())
     except ValidationError as er:
-        return NewRobotResponse(error=er.errors())
+        return ParsedRobot(error=er.errors())
 
 
-def save_new_robot(new_robot_data):
+def save_new_robot(robot_data: json) -> NewRobotResponse:
     try:
-        new_robot = Robot.objects.create(**new_robot_data)
-        return new_robot
+        robot_serial = f'{robot_data.get("model")}-{robot_data.get("version")}'
+        new_robot_data = NewRobot(**robot_data, serial=robot_serial)
+        Robot.objects.create(**new_robot_data.model_dump())
+        return NewRobotResponse(response_message={'success': 'Robot added'},
+                                response_status=200)
     except DatabaseError:
-        response_data = {'error_message': "Internal Server Error"}
-        return HttpResponseServerError(json.dumps(response_data),
-                                       content_type='application/json')
+        return NewRobotResponse(response_message={
+            'error_message': 'Internal Server Error'},
+            response_status=500)
