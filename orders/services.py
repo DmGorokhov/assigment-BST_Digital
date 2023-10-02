@@ -22,7 +22,7 @@ class NewOrderResponse:
         self.response_states = {
             "not_created": ({'failed': 'order not create'}, 500),
             "created": ({'success': 'order created'}, 200),
-            "robot unavailable": ({'info': (f'Sorry, asking robot out of stock'
+            "robot unavailable": ({'info': (f'Sorry, asking robot out of stock' # noqa F541
                                             f' now, we will inform you by email'
                                             f' when it become available')}, 200)
         }
