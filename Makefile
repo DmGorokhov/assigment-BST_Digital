@@ -11,11 +11,20 @@ migrate: make-migration
 
 build: install migrate
 
+setup: migrate
+	echo Create a super user
+	poetry run python manage.py createsuperuser
+
 run-celery:
 	 celery -A R4C worker --loglevel=info & celery -A R4C flower
 
-start-dev:
-		@$(MANAGE) runserver
+run-redis:
+	 redis-server --daemonize yes
+
+start-server:
+		poetry run python manage.py runserver 0.0.0.0:8000
+
+start: run-redis start-server
 
 lint:
 		poetry run flake8 .
