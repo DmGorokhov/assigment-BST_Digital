@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import RobotStubView
+from .views import add_new_robot
+
+app_name = 'robots'
 
 urlpatterns = [
-    path('', RobotStubView.as_view()),
+    path('new/', add_new_robot, name='new_robot'),
 ]
