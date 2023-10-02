@@ -6,18 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from robots.services.services_main import (save_new_robot,
                                            get_parsed_and_validate_robot)
 from robots.services.services_reports import make_week_report
-
-
-@require_http_methods(['GET'])
-def get_week_report(request):
-    report_data = make_week_report()
-    current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    report_filename = f'week_report {current_datetime}.xlsx'
-    response = FileResponse(report_data,
-                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', # noqa E501
-                            # noqa: E501
-                            filename=report_filename, as_attachment=True)
-    return response
+from asgiref.sync import sync_to_async
 
 
 @csrf_exempt
@@ -31,3 +20,13 @@ def add_new_robot(request):
     new_robot = save_new_robot(robot_data.clean_data)
     return JsonResponse(data=new_robot.response_message,
                         status=new_robot.response_status)
+
+
+async def get_week_report(request):
+    report_data = await sync_to_async(make_week_report)()
+    current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    report_filename = f'week_report {current_datetime}.xlsx'
+    response = FileResponse(report_data,
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', # noqa E501
+                            filename=report_filename, as_attachment=True)
+    return response

@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.db import DatabaseError
 from .models import Robot
+from django.test import AsyncClient
+from django.http import FileResponse
 
 
 class AddNewRobotTest(TestCase):
@@ -57,3 +59,18 @@ class AddNewRobotTest(TestCase):
 
     def _raise_db_error(self, **kwargs):
         raise DatabaseError()
+
+
+class TestWeekReportView(TestCase):
+    fixtures = ['db_robots.json']
+
+    async def test_get_week_report(self):
+        client = AsyncClient()
+        response = await client.get(reverse('robots:week_report'))
+
+        self.assertIsInstance(response, FileResponse)
+
+        self.assertIn("week_report", response.filename)
+
+        self.assertEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", # noqa E501
+                         response.get("Content-Type"))
