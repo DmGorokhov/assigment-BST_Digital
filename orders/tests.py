@@ -40,9 +40,9 @@ class AddNewOrderTest(TestCase):
         self.assertIsInstance(response, JsonResponse)
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(str(response.content, encoding='utf8'),
-                             {'info': 'Sorry, asking robot out of stock \
-                                            now, we will inform you by email \
-                                            when it become available'}
+                             {'info': f'Sorry, asking robot out of stock '
+                                      f'now, we will inform you by email '
+                                      f'when it become available'}
                              )
 
     def test_invalid_order(self):

@@ -1,7 +1,7 @@
 import json
 from pydantic import BaseModel, constr, ValidationError
 from datetime import datetime
-from .models import Robot
+from robots.models import Robot
 from django.db import DatabaseError
 from typing import Literal
 

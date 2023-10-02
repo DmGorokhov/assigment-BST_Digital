@@ -64,6 +64,7 @@ MIDDLEWARE = [
 if DEBUG:
     INSTALLED_APPS += [
         "debug_toolbar",
+        "django_extensions",
         'flower'
     ]
     MIDDLEWARE += [
@@ -127,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
