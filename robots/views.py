@@ -1,10 +1,11 @@
 from django.http import FileResponse
-from .services import make_week_report
 from datetime import datetime
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from .services import save_new_robot, get_parsed_and_validate_robot
+from robots.services.services_main import (save_new_robot,
+                                           get_parsed_and_validate_robot)
+from robots.services.services_reports import make_week_report
 
 
 @require_http_methods(['GET'])
@@ -13,7 +14,7 @@ def get_week_report(request):
     current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M")
     report_filename = f'week_report {current_datetime}.xlsx'
     response = FileResponse(report_data,
-                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', # noqa E501
                             # noqa: E501
                             filename=report_filename, as_attachment=True)
     return response
