@@ -23,6 +23,10 @@ lint:
 test:
 		poetry run ./manage.py test
 
+test-coverage:
+		poetry run coverage run  manage.py test .
+		poetry run coverage html
+
 .PHONY: shell
 shell:
 		@$(MANAGE) shell_plus --ipython
